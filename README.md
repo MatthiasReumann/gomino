@@ -1,14 +1,12 @@
 # gomino
-Test-Utilities for [gin-gonic/gin](https://github.com/gin-gonic/gin).
+Gomino provides test-utilities for [gin-gonic/gin](https://github.com/gin-gonic/gin)'s web framework.
 
 ## Examples
-#### Most basic router from Gin's README.md
+#### Simple 'ping' router from Gin's README.md
 ```golang 
 func pingRouter(r *gin.Engine) *gin.Engine {
 	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
+		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
 	return r
 }
@@ -33,9 +31,7 @@ func TestGinReadme(t *testing.T) {
 func userRouter(r *gin.Engine) *gin.Engine {
 	r.GET("/user", func(c *gin.Context) {
 		if c.MustGet("session-username").(string) == "hansi" {
-			c.JSON(http.StatusOK, gin.H{
-				"message": "hello hansi",
-			})
+			c.JSON(http.StatusOK, gin.H{"message": "hello hansi"})
 		} else {
 			c.AbortWithStatus(http.StatusForbidden)
 		}
