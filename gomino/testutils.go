@@ -17,6 +17,7 @@ import (
 type TestCases map[string]TestCase
 
 type TestCase struct {
+	Router      func(*gin.Engine)
 	Method      string
 	Url         string
 	Middlewares []func(c *gin.Context)
@@ -31,7 +32,7 @@ type TestCase struct {
 	After  func()
 }
 
-func (tc TestCases) Run(t *testing.T, router func(*gin.Engine)) {
+func (tc TestCases) Run(t *testing.T) {
 	for name, testCase := range tc {
 		if testCase.Before != nil {
 			testCase.Before()
@@ -45,7 +46,7 @@ func (tc TestCases) Run(t *testing.T, router func(*gin.Engine)) {
 				r.Use(mw)
 			}
 
-			router(r)
+			testCase.Router(r)
 
 			c.Request, _ = http.NewRequest(testCase.Method, testCase.Url, testCase.getBody())
 			if testCase.Method != http.MethodGet {

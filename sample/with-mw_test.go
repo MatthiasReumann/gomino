@@ -21,8 +21,12 @@ func userRouter(r *gin.Engine) *gin.Engine {
 }
 
 func TestWithMiddleware(t *testing.T) {
-	testCases := gomino.TestCases{
+	router := func(r *gin.Engine) {
+		userRouter(r)
+	}
+	gomino.TestCases{
 		"user hansi": {
+			Router: router,
 			Method: http.MethodGet,
 			Url:    "/user",
 			Middlewares: []func(c *gin.Context){
@@ -34,6 +38,7 @@ func TestWithMiddleware(t *testing.T) {
 			ExpectedResponse: gin.H{"message": "hello hansi"},
 		},
 		"user not hansi": {
+			Router: router,
 			Method: http.MethodGet,
 			Url:    "/user",
 			Middlewares: []func(c *gin.Context){
@@ -43,8 +48,5 @@ func TestWithMiddleware(t *testing.T) {
 			},
 			ExpectedCode: http.StatusForbidden,
 		},
-	}
-	testCases.Run(t, func(r *gin.Engine) {
-		userRouter(r)
-	})
+	}.Run(t)
 }

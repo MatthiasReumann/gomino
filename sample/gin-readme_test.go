@@ -17,15 +17,16 @@ func pingRouter(r *gin.Engine) *gin.Engine {
 }
 
 func TestGinReadme(t *testing.T) {
-	testCases := gomino.TestCases{
+	router := func(r *gin.Engine) {
+		pingRouter(r)
+	}
+	gomino.TestCases{
 		"ping": {
+			Router:           router,
 			Method:           http.MethodGet,
 			Url:              "/ping",
 			ExpectedCode:     http.StatusOK,
 			ExpectedResponse: gin.H{"message": "pong"},
 		},
-	}
-	testCases.Run(t, func(r *gin.Engine) {
-		pingRouter(r)
-	})
+	}.Run(t)
 }
