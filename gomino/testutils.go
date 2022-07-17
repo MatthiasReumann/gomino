@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/assert/v2"
+	"github.com/stretchr/testify/assert"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -53,7 +53,6 @@ func (tc TestCases) Run(t *testing.T) {
 				c.Request.Header.Set("Content-Type", testCase.getContentType())
 			}
 			r.ServeHTTP(w, c.Request)
-
 			assert.Equal(t, testCase.ExpectedCode, w.Code)
 
 			if testCase.ExpectedResponse != nil {
