@@ -12,17 +12,18 @@ func pingRouter(r *gin.Engine) *gin.Engine {
 }
 
 func TestGinReadme(t *testing.T) {
-	testCases := gomino.TestCases{
+	router := func(r *gin.Engine) {
+		pingRouter(r)
+	}
+	gomino.TestCases{
 		"ping": {
+			Router:           router,
 			Method:           http.MethodGet,
 			Url:              "/ping",
 			ExpectedCode:     http.StatusOK,
 			ExpectedResponse: gin.H{"message": "pong"},
 		},
-	}
-	testCases.Run(t, func(r *gin.Engine) {
-		pingRouter(r)
-	})
+	}.Run(t)
 }
 ```
 
@@ -40,31 +41,33 @@ func userRouter(r *gin.Engine) *gin.Engine {
 }
 
 func TestWithMiddleware(t *testing.T) {
-	testCases := gomino.TestCases{
-		"user hansi": {
-			Method: http.MethodGet,
-			Url:    "/user",
-			Middlewares: []func(c *gin.Context){
-				func(c *gin.Context) {
-					c.Set("session-username", "hansi")
-				},
-			},
-			ExpectedCode:     http.StatusOK,
-			ExpectedResponse: gin.H{"message": "hello hansi"},
-		},
-		"user not hansi": {
-			Method: http.MethodGet,
-			Url:    "/user",
-			Middlewares: []func(c *gin.Context){
-				func(c *gin.Context) {
-					c.Set("session-username", "bobby")
-				},
-			},
-			ExpectedCode: http.StatusForbidden,
-		},
-	}
-	testCases.Run(t, func(r *gin.Engine) {
-		userRouter(r)
-	})
+    router := func(r *gin.Engine) {
+        userRouter(r)
+    }
+    gomino.TestCases{
+        "user hansi": {
+            Router: router,
+            Method: http.MethodGet,
+            Url:    "/user",
+            Middlewares: []func(c *gin.Context){
+                func(c *gin.Context) {
+                    c.Set("session-username", "hansi")
+                },
+            },
+            ExpectedCode:     http.StatusOK,
+            ExpectedResponse: gin.H{"message": "hello hansi"},
+        },
+        "user not hansi": {
+            Router: router,
+            Method: http.MethodGet,
+            Url:    "/user",
+            Middlewares: []func(c *gin.Context){
+                func(c *gin.Context) {
+                    c.Set("session-username", "bobby")
+                },
+            },
+            ExpectedCode: http.StatusForbidden,
+        },
+    }.Run(t)
 }
 ```
