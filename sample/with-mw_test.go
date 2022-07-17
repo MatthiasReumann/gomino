@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func userRouter(r *gin.Engine) *gin.Engine {
+func userRouter(r *gin.Engine) {
 	r.GET("/user", func(c *gin.Context) {
 		if c.MustGet("session-username").(string) == "hansi" {
 			c.JSON(http.StatusOK, gin.H{
@@ -17,16 +17,12 @@ func userRouter(r *gin.Engine) *gin.Engine {
 			c.AbortWithStatus(http.StatusForbidden)
 		}
 	})
-	return r
 }
 
 func TestWithMiddleware(t *testing.T) {
-	router := func(r *gin.Engine) {
-		userRouter(r)
-	}
 	gomino.TestCases{
 		"user hansi": {
-			Router: router,
+			Router: userRouter,
 			Method: http.MethodGet,
 			Url:    "/user",
 			Middlewares: []func(c *gin.Context){
@@ -38,7 +34,7 @@ func TestWithMiddleware(t *testing.T) {
 			ExpectedResponse: gin.H{"message": "hello hansi"},
 		},
 		"user not hansi": {
-			Router: router,
+			Router: userRouter,
 			Method: http.MethodGet,
 			Url:    "/user",
 			Middlewares: []func(c *gin.Context){

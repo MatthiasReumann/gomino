@@ -8,16 +8,12 @@ func pingRouter(r *gin.Engine) *gin.Engine {
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
-	return r
 }
 
 func TestGinReadme(t *testing.T) {
-	router := func(r *gin.Engine) {
-		pingRouter(r)
-	}
 	gomino.TestCases{
 		"ping": {
-			Router:           router,
+			Router:           pingRouter,
 			Method:           http.MethodGet,
 			Url:              "/ping",
 			ExpectedCode:     http.StatusOK,
@@ -29,7 +25,7 @@ func TestGinReadme(t *testing.T) {
 
 #### Using middlewares
 ```golang
-func userRouter(r *gin.Engine) *gin.Engine {
+func userRouter(r *gin.Engine) {
 	r.GET("/user", func(c *gin.Context) {
 		if c.MustGet("session-username").(string) == "hansi" {
 			c.JSON(http.StatusOK, gin.H{"message": "hello hansi"})
@@ -37,16 +33,12 @@ func userRouter(r *gin.Engine) *gin.Engine {
 			c.AbortWithStatus(http.StatusForbidden)
 		}
 	})
-	return r
 }
 
 func TestWithMiddleware(t *testing.T) {
-    router := func(r *gin.Engine) {
-        userRouter(r)
-    }
     gomino.TestCases{
         "user hansi": {
-            Router: router,
+            Router: userRouter,
             Method: http.MethodGet,
             Url:    "/user",
             Middlewares: []func(c *gin.Context){
@@ -58,7 +50,7 @@ func TestWithMiddleware(t *testing.T) {
             ExpectedResponse: gin.H{"message": "hello hansi"},
         },
         "user not hansi": {
-            Router: router,
+            Router: userRouter,
             Method: http.MethodGet,
             Url:    "/user",
             Middlewares: []func(c *gin.Context){
@@ -75,7 +67,7 @@ func TestWithMiddleware(t *testing.T) {
 #### Using router-functions with dependency injection
 
 ```golang
-func loginRouter(r *gin.Engine, dao UserDao) *gin.Engine {
+func loginRouter(r *gin.Engine, dao UserDao) {
 	r.POST("/login", func(c *gin.Context) {
 		if dao.Get() == "hansi" {
 			c.Status(http.StatusOK)
@@ -83,7 +75,6 @@ func loginRouter(r *gin.Engine, dao UserDao) *gin.Engine {
 			c.AbortWithStatus(http.StatusForbidden)
 		}
 	})
-	return r
 }
 
 func TestRouterWithDependencies(t *testing.T) {

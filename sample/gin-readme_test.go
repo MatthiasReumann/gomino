@@ -7,22 +7,18 @@ import (
 	"testing"
 )
 
-func pingRouter(r *gin.Engine) *gin.Engine {
+func pingRouter(r *gin.Engine) {
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
-	return r
 }
 
 func TestGinReadme(t *testing.T) {
-	router := func(r *gin.Engine) {
-		pingRouter(r)
-	}
 	gomino.TestCases{
 		"ping": {
-			Router:           router,
+			Router:           pingRouter,
 			Method:           http.MethodGet,
 			Url:              "/ping",
 			ExpectedCode:     http.StatusOK,

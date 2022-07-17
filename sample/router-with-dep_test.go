@@ -23,7 +23,7 @@ func NewUserDaoMock(name string) UserDao {
 	return userDao{name}
 }
 
-func loginRouter(r *gin.Engine, dao UserDao) *gin.Engine {
+func loginRouter(r *gin.Engine, dao UserDao) {
 	r.POST("/login", func(c *gin.Context) {
 		if dao.Get() == "hansi" {
 			c.Status(http.StatusOK)
@@ -31,7 +31,6 @@ func loginRouter(r *gin.Engine, dao UserDao) *gin.Engine {
 			c.AbortWithStatus(http.StatusForbidden)
 		}
 	})
-	return r
 }
 
 func TestRouterWithDependencies(t *testing.T) {
