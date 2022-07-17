@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert/v2"
 	"io"
@@ -18,11 +17,13 @@ import (
 type TestCases map[string]TestCase
 
 type TestCase struct {
-	Method           string
-	Url              string
-	Middlewares      []func(c *gin.Context)
-	ContentType      string
-	Body             interface{}
+	Method      string
+	Url         string
+	Middlewares []func(c *gin.Context)
+
+	ContentType string
+	Body        interface{}
+
 	ExpectedCode     int
 	ExpectedResponse interface{}
 
@@ -30,7 +31,7 @@ type TestCase struct {
 	After  func()
 }
 
-func (tc TestCases) Run(t *testing.T, router func(r *gin.Engine)) {
+func (tc TestCases) Run(t *testing.T, router func(*gin.Engine)) {
 	for name, testCase := range tc {
 		if testCase.Before != nil {
 			testCase.Before()
@@ -55,8 +56,6 @@ func (tc TestCases) Run(t *testing.T, router func(r *gin.Engine)) {
 			assert.Equal(t, testCase.ExpectedCode, w.Code)
 
 			if testCase.ExpectedResponse != nil {
-				fmt.Println(string(testCase.getResponse()))
-				fmt.Println(w.Body.String())
 				assert.Equal(t, testCase.getResponse(), w.Body.Bytes())
 			}
 		})
