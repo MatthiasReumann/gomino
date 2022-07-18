@@ -14,6 +14,8 @@ import (
 	"testing"
 )
 
+type HttpHeader map[string]string
+
 type TestCases map[string]TestCase
 
 type TestCase struct {
@@ -25,6 +27,7 @@ type TestCase struct {
 	ContentType string
 	Body        interface{}
 
+	ExpectedHeader   HttpHeader
 	ExpectedCode     int
 	ExpectedResponse interface{}
 
@@ -53,6 +56,11 @@ func (tc TestCases) Run(t *testing.T) {
 				c.Request.Header.Set("Content-Type", testCase.getContentType())
 			}
 			r.ServeHTTP(w, c.Request)
+
+			for field, expected := range testCase.ExpectedHeader {
+				assert.Equal(t, expected, w.Header().Get(field))
+			}
+
 			assert.Equal(t, testCase.ExpectedCode, w.Code)
 
 			if testCase.ExpectedResponse != nil {
