@@ -1,5 +1,6 @@
 # gomino
 ![Go Report Card](https://goreportcard.com/badge/github.com/matthiasreumann/gomino)
+[![Go Reference](https://pkg.go.dev/badge/github.com/matthiasreumann/gomino.svg)](https://pkg.go.dev/github.com/matthiasreumann/gomino)
 
 Gomino provides test-utilities for [gin-gonic/gin](https://github.com/gin-gonic/gin)'s web framework.
 
