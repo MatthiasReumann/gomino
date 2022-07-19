@@ -1,4 +1,4 @@
-module gomino
+module github.com/matthiasreumann/gomino
 
 go 1.18
 
