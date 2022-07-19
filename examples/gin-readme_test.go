@@ -1,8 +1,8 @@
-package sample
+package examples
 
 import (
 	"github.com/gin-gonic/gin"
-	"gomino/gomino"
+	"gomino"
 	"net/http"
 	"testing"
 )
