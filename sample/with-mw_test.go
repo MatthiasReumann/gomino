@@ -11,7 +11,7 @@ func userRouter(r *gin.Engine) {
 	r.GET("/user", func(c *gin.Context) {
 		if c.MustGet("session-username").(string) == "hansi" {
 			c.JSON(http.StatusOK, gin.H{
-				"message": "hello hansi!",
+				"message": "hello hansi",
 			})
 		} else {
 			c.AbortWithStatus(http.StatusForbidden)
