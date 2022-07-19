@@ -2,6 +2,9 @@ on: [push, pull_request]
 jobs:
   codecov:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./sample
     steps:
       - name: Codecov
         uses: codecov/codecov-action@v3.1.0
