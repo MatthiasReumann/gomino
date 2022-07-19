@@ -3,7 +3,20 @@
 
 Gomino provides test-utilities for [gin-gonic/gin](https://github.com/gin-gonic/gin)'s web framework.
 
-## Examples
+## Usage 
+
+Download and install `gomino`:
+```bash
+go get github.com/matthiasreumann/gomino
+```
+
+Import it in your code:
+```golang
+import "github.com/matthiasreumann/gomino"
+```
+
+
+### Examples
 #### Simple 'ping' router from Gin's README.md
 ```golang 
 func pingRouter(r *gin.Engine) *gin.Engine {
