@@ -2,7 +2,7 @@ package examples
 
 import (
 	"github.com/gin-gonic/gin"
-	"gomino"
+	"github.com/matthiasreumann/gomino"
 	"net/http"
 	"testing"
 )
