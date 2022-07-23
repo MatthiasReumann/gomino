@@ -14,10 +14,14 @@ import (
 	"testing"
 )
 
-type HttpHeader map[string]string
-
+// TestCases shall contain all test cases of a single test suite, e.g. for one particular endpoint.
+// The key represents the test name, the value an instance of TestCase
 type TestCases map[string]TestCase
 
+// HttpHeader is a key value map for HTTP header fields such as Content-Type, Cache-Control,...
+type HttpHeader map[string]string
+
+// TestCase contains everything a single test needs to execute
 type TestCase struct {
 	Router      func(*gin.Engine)
 	Method      string
@@ -35,6 +39,7 @@ type TestCase struct {
 	After  func()
 }
 
+// Run executes all tests of a given TestCases object
 func (tc TestCases) Run(t *testing.T) {
 	for name, testCase := range tc {
 		if testCase.Before != nil {
