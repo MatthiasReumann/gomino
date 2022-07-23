@@ -2,6 +2,7 @@ package examples
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/assert/v2"
 	"github.com/matthiasreumann/gomino"
 	"net/http"
 	"testing"
@@ -24,5 +25,5 @@ func TestGinReadme(t *testing.T) {
 			ExpectedCode:     http.StatusOK,
 			ExpectedResponse: gin.H{"message": "pong"},
 		},
-	}.Run(t)
+	}.Run(t, assert.Equal)
 }

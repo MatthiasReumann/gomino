@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -39,8 +38,11 @@ type TestCase struct {
 	After  func()
 }
 
+// Equal is the function signiture for one's favourite testing framework
+type Equal func(*testing.T, interface{}, interface{})
+
 // Run executes all tests of a given TestCases object
-func (tc TestCases) Run(t *testing.T) {
+func (tc TestCases) Run(t *testing.T, equal Equal) {
 	for name, testCase := range tc {
 		if testCase.Before != nil {
 			testCase.Before()
@@ -63,13 +65,13 @@ func (tc TestCases) Run(t *testing.T) {
 			r.ServeHTTP(w, c.Request)
 
 			for field, expected := range testCase.ExpectedHeader {
-				assert.Equal(t, expected, w.Header().Get(field))
+				equal(t, expected, w.Header().Get(field))
 			}
 
-			assert.Equal(t, testCase.ExpectedCode, w.Code)
+			equal(t, testCase.ExpectedCode, w.Code)
 
 			if testCase.ExpectedResponse != nil {
-				assert.Equal(t, testCase.getResponse(), w.Body.Bytes())
+				equal(t, testCase.getResponse(), w.Body.Bytes())
 			}
 		})
 

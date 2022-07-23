@@ -35,7 +35,7 @@ func TestGinReadme(t *testing.T) {
 			ExpectedCode:     http.StatusOK,
 			ExpectedResponse: gin.H{"message": "pong"},
 		},
-	}.Run(t)
+	}.Run(t, assert.Equal)
 }
 ```
 
@@ -76,7 +76,7 @@ func TestWithMiddleware(t *testing.T) {
             },
             ExpectedCode: http.StatusForbidden,
         },
-    }.Run(t)
+    }.Run(t, assert.Equal)
 }
 ```
 
@@ -111,6 +111,6 @@ func TestRouterWithDependencies(t *testing.T) {
 			Url:          "/login",
 			ExpectedCode: http.StatusForbidden,
 		},
-	}.Run(t)
+	}.Run(t, assert.Equal)
 }
 ```

@@ -2,6 +2,7 @@ package examples
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/assert/v2"
 	"github.com/matthiasreumann/gomino"
 	"net/http"
 	"testing"
@@ -44,5 +45,5 @@ func TestWithMiddleware(t *testing.T) {
 			},
 			ExpectedCode: http.StatusForbidden,
 		},
-	}.Run(t)
+	}.Run(t, assert.Equal)
 }
