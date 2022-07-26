@@ -27,3 +27,15 @@ func TestGinReadme(t *testing.T) {
 		},
 	}.Run(t, assert.Equal)
 }
+
+func TestGinReadmeWithDefaults(t *testing.T) {
+	gomino.TestCases{
+		"ping": {
+			ExpectedCode:     http.StatusOK,
+			ExpectedResponse: gin.H{"message": "pong"},
+		}}.
+		Router(pingRouter).
+		Url("/ping").
+		Method(http.MethodGet).
+		Run(t, assert.Equal)
+}
