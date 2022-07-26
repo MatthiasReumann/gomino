@@ -13,10 +13,6 @@ import (
 	"testing"
 )
 
-// TestCases shall contain all test cases of a single test suite, e.g. for one particular endpoint.
-// The key represents the test name, the value an instance of TestCase
-type TestCases map[string]TestCase
-
 // HttpHeader is a key value map for HTTP header fields such as Content-Type, Cache-Control,...
 type HttpHeader map[string]string
 
@@ -36,49 +32,6 @@ type TestCase struct {
 
 	Before func()
 	After  func()
-}
-
-// Equal is the function signiture for one's favourite testing framework
-type Equal func(*testing.T, interface{}, interface{})
-
-// Run executes all tests of a given TestCases object
-func (tc TestCases) Run(t *testing.T, equal Equal) {
-	for name, testCase := range tc {
-		if testCase.Before != nil {
-			testCase.Before()
-		}
-
-		t.Run(name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, r := gin.CreateTestContext(w)
-
-			for _, mw := range testCase.Middlewares {
-				r.Use(mw)
-			}
-
-			testCase.Router(r)
-
-			c.Request, _ = http.NewRequest(testCase.Method, testCase.Url, testCase.getBody())
-			if testCase.Method != http.MethodGet {
-				c.Request.Header.Set("Content-Type", testCase.getContentType())
-			}
-			r.ServeHTTP(w, c.Request)
-
-			for field, expected := range testCase.ExpectedHeader {
-				equal(t, expected, w.Header().Get(field))
-			}
-
-			equal(t, testCase.ExpectedCode, w.Code)
-
-			if testCase.ExpectedResponse != nil {
-				equal(t, testCase.getResponse(), w.Body.Bytes())
-			}
-		})
-
-		if testCase.After != nil {
-			testCase.After()
-		}
-	}
 }
 
 func (c TestCase) getContentType() string {
@@ -123,6 +76,86 @@ func (c TestCase) getResponse() []byte {
 		}
 
 		return j
+	}
+}
+
+// Equal is the function signiture for one's favourite testing framework
+type Equal func(*testing.T, interface{}, interface{})
+
+// TestCases shall contain all test cases of a single test suite, e.g. for one particular endpoint.
+// The key represents the test name, the value an instance of TestCase
+type TestCases map[string]*TestCase
+
+// Router sets the default router for all test cases.
+// This method does not overwrite pre-existing values.
+func (tc TestCases) Router(r func(*gin.Engine)) TestCases {
+	for _, testCase := range tc {
+		if testCase.Router == nil {
+			testCase.Router = r
+		}
+	}
+	return tc
+}
+
+// Url sets the default route for all test cases
+// This method does not overwrite pre-existing values.
+func (tc TestCases) Url(url string) TestCases {
+	for _, testCase := range tc {
+		if testCase.Url == "" {
+			testCase.Url = url
+		}
+	}
+	return tc
+}
+
+// Method sets the default http-method for all test cases
+// This method does not overwrite pre-existing values.
+func (tc TestCases) Method(method string) TestCases {
+	for _, testCase := range tc {
+		if testCase.Method == "" {
+			testCase.Method = method
+		}
+	}
+	return tc
+}
+
+// Run executes all tests of a given TestCases object
+func (tc TestCases) Run(t *testing.T, equal Equal) {
+	for name, testCase := range tc {
+		if testCase.Before != nil {
+			testCase.Before()
+		}
+
+		t.Run(name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, r := gin.CreateTestContext(w)
+
+			for _, mw := range testCase.Middlewares {
+				r.Use(mw)
+			}
+
+			testCase.Router(r)
+
+			c.Request, _ = http.NewRequest(testCase.Method, testCase.Url, testCase.getBody())
+			if testCase.Method != http.MethodGet {
+				c.Request.Header.Set("Content-Type", testCase.getContentType())
+			}
+			r.ServeHTTP(w, c.Request)
+
+			for field, expected := range testCase.ExpectedHeader {
+				equal(t, expected, w.Header().Get(field))
+			}
+
+			equal(t, testCase.ExpectedCode, w.Code)
+
+			if testCase.ExpectedResponse != nil {
+				equal(t, testCase.getResponse(), w.Body.Bytes())
+			}
+		})
+
+		if testCase.After != nil {
+			testCase.After()
+		}
 	}
 }
 
