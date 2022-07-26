@@ -66,7 +66,7 @@ func (c TestCase) getBody() io.Reader {
 func (c TestCase) getResponse() []byte {
 	switch c.ExpectedResponse.(type) {
 	case string:
-		return c.ExpectedResponse.([]byte)
+		return []byte(c.ExpectedResponse.(string))
 	case []byte:
 		return c.ExpectedResponse.([]byte)
 	default:
